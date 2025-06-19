@@ -11,3 +11,33 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.menu-cls td {
+  padding: 15px;
+  background-color:green;
+  
+}
+a {
+  text-decoration: none;
+  color: #FFFFFF;
+}
+.grid-title {
+  background-color: green;
+  color: #FFFFFF;
+  padding: 10px;
+  text-align: left;
+}
+.grid-table {
+  width: 99%;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+}
+.grid-headers td {
+  font-weight: 700;
+  padding: 5px;
+  background-color: #ccaee8;
+}
+.grid-data td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
