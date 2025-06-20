@@ -11,7 +11,7 @@ class CodeList extends Component {
         }
     }
     componentDidMount() {
-        let res = ApiUtil.getCall("http://localhost:8083/codelist/list");
+        let res = ApiUtil.getCall("http://localhost:9011/codelist/list");
         res.then(data => {
             console.log(data.codeListBeanList);
             let dataList = [];
