@@ -13,7 +13,7 @@ class AmsButton extends Component {
             typeCls = "ams-btn-inactive";
         }
         return(
-            <div>
+            <div style={this.props.style}>
                 <input className={typeCls} type="button" id={this.props.id} value={this.props.label} onClick ={this.props.callBack}/>
             </div>
         )
