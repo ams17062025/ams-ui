@@ -41,3 +41,15 @@ a {
   padding-bottom: 5px;
   border-bottom: 1px solid #ccc;
 }
+.ams-btn-active {
+  background-color: blueviolet;
+  color: #FFFFFF;
+  padding: 10px;
+  border: 1px solid #FFFFFF;
+}
+.ams-btn-inactive {
+  background-color: rgb(244, 42, 42);
+  color: #FFFFFF;
+  padding: 10px;
+  border: 1px solid #FFFFFF;
+}

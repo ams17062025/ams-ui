@@ -1,6 +1,7 @@
 import { Component } from "react";
 import AmsGrid from "../components/AmsGrid";
 import * as ApiUtil from "../utils/ApiUtil";
+import AmsButton from "../components/AmsButton";
 
 class CodeList extends Component {
     constructor(props) {
@@ -9,6 +10,10 @@ class CodeList extends Component {
             headers: [{key:"name", value:"Name"}, {key: "description", value: "Description"}],
             codeListData: []
         }
+        this.addCall = this.addCall.bind(this)
+    }
+    addCall(event) {
+        alert('add call');
     }
     componentDidMount() {
         let res = ApiUtil.getCall("http://localhost:9011/codelist/list");
@@ -24,7 +29,27 @@ class CodeList extends Component {
     render() {
         return(
             <div>
-                <AmsGrid 
+                <table style={{width: "99%"}}>
+                    <tr>
+                        <td>
+                            <AmsButton 
+                                id="add-button" 
+                                label="Add" 
+                                callBack={event => this.addCall(event)}
+                                type="active"
+                            />
+                        </td>
+                        <td>
+                            <AmsButton 
+                                id="delete-button" 
+                                label="Delete" 
+                                callBack={event => this.addCall(event)}
+                                type="inactive"
+                            />
+                        </td>
+                    </tr>
+                </table>
+                 <AmsGrid 
                     headers={this.state.headers}
                     title="List of CodeList Names"
                     data={this.state.codeListData}
