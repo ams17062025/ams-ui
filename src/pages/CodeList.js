@@ -8,12 +8,13 @@ class CodeList extends Component {
         super(props);
         this.state = {
             headers: [{key:"name", value:"Name"}, {key: "description", value: "Description"}],
-            codeListData: []
+            codeListData: [],
+            showAddForm: false
         }
         this.addCall = this.addCall.bind(this)
     }
     addCall(event) {
-        alert('add call');
+        this.setState({showAddForm: true});
     }
     componentDidMount() {
         let res = ApiUtil.getCall("http://localhost:9011/codelist/list");
@@ -25,10 +26,10 @@ class CodeList extends Component {
             })
             this.setState({codeListData: dataList}); 
         });
-    }
+    }    
     render() {
         return(
-            <div>
+            <div>                
                 <table style={{width: "99%"}}>
                     <tr>
                         <td>
@@ -49,11 +50,16 @@ class CodeList extends Component {
                         </td>
                     </tr>
                 </table>
-                 <AmsGrid 
-                    headers={this.state.headers}
-                    title="List of CodeList Names"
-                    data={this.state.codeListData}
-                />
+                {this.state.showAddForm === true && (
+                    <div>Construct Form here</div>
+                )}
+                {this.state.showAddForm === false && (
+                    <AmsGrid 
+                        headers={this.state.headers}
+                        title="List of CodeList Names"
+                        data={this.state.codeListData}
+                    />
+                )}
             </div>
         )
     }
