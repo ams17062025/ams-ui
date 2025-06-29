@@ -1,13 +1,18 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import AmsGrid from "../components/AmsGrid";
 import * as ApiUtil from "../utils/ApiUtil";
 import AmsButton from "../components/AmsButton";
 import AmsInput from "../components/AmsInput";
+import * as EndPoits from "../utils/EndPoints";
+import * as Utils from "../utils/Utils";
+
 class CodeList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            headers: [{key:"name", value:"Name"}, {key: "description", value: "Description"}],
+            headers: [
+                {key:"name", value:"Name", link: true}, 
+                {key: "description", value: "Description"}],
             codeListData: [],
             showAddForm: false,
             name: "",
@@ -18,6 +23,11 @@ class CodeList extends Component {
         this.getCodeListData = this.getCodeListData.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.cancelAction = this.cancelAction.bind(this);
+        this.nameClick = this.nameClick.bind(this);
+        this.amsGridRef = React.createRef();
+    }
+    nameClick(event, codeListId) {
+        alert(codeListId);
     }
     handleInputChange(event, type) {
         let val = event.target.value;
@@ -33,6 +43,26 @@ class CodeList extends Component {
     addCall(event) {
         this.setState({showAddForm: true});
     }
+    deleteAction() {
+        if(this.amsGridRef !== undefined && this.amsGridRef.current !== undefined) {
+            if(this.amsGridRef.current.state.selectedItmes.length === 0) {
+                Utils.processErronMessage('Please select a item to delete.');
+            } else if(this.amsGridRef.current.state.selectedItmes.length > 1) {
+                Utils.processErronMessage('Please select a single item to delete.');
+            } else {
+                var codeListId = this.amsGridRef.current.state.selectedItmes[0];
+                let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
+                res.then(data => {
+                    if(data.status === "SUCCESS") {
+                        Utils.processSuccessMessage('Codelist deleted successfully.');
+                        this.getCodeListData();
+                        this.setState({showAddForm: false});
+                        this.amsGridRef.current.state.selectedItmes = [];
+                    }
+                });
+            }
+        }
+    }
     saveAction(event) {
         let request = {
             "codeListBean": {
@@ -40,11 +70,12 @@ class CodeList extends Component {
                 description: this.state.description
             }
         }
-        let res = ApiUtil.postCall("http://localhost:9011/codelist/add", request);
+        let res = ApiUtil.postCall(EndPoits.CODE_LIST_ADD, request);
         res.then(data => {
-            if(data.status === "SUCCESS") {
+            if(data.status === "SUCCESS") {                
                 this.getCodeListData();
                 this.setState({showAddForm: false});
+                Utils.processSuccessMessage("Codelist added succssfully.")
             }
         });
         
@@ -53,12 +84,12 @@ class CodeList extends Component {
         this.getCodeListData();
     }   
     getCodeListData()  {
-        let res = ApiUtil.getCall("http://localhost:9011/codelist/list");
+        let res = ApiUtil.getCall(EndPoits.CODE_LIST_ALL);
         res.then(data => {
             console.log(data.codeListBeanList);
             let dataList = [];
             data.codeListBeanList.map((obj) => {
-                dataList.push({name: ""+obj.name+"", description: ""+obj.description+""});
+                dataList.push({recordId: ""+obj.recordId+"", name: ""+obj.name+"", description: ""+obj.description+""});
             })
             this.setState({codeListData: dataList}); 
         });
@@ -80,7 +111,7 @@ class CodeList extends Component {
                             <AmsButton 
                                 id="delete-button" 
                                 label="Delete" 
-                                callBack={event => this.addCall(event)}
+                                callBack={event => this.deleteAction(event)}
                                 type="inactive"
                             />
                         </td>    
@@ -135,9 +166,12 @@ class CodeList extends Component {
                 )}
                 {this.state.showAddForm === false && (
                     <AmsGrid 
+                        keyValue="recordId"
                         headers={this.state.headers}
                         title="List of CodeList Names"
                         data={this.state.codeListData}
+                        linkFn = {this.nameClick}
+                        ref={this.amsGridRef}
                     />
                 )}
             </div>

@@ -14,3 +14,13 @@ export async function postCall(url, requestBody) {
     if (!res.ok) throw new Error('Network error');
     return res.json();
 }
+
+export async function deleteCall(url, requestBody) {
+    const res = await fetch(url, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(requestBody)
+    });
+    if (!res.ok) throw new Error('Network error');
+    return res.json();
+}
