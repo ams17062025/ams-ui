@@ -16,7 +16,15 @@ class CodeList extends Component {
             codeListData: [],
             showAddForm: false,
             name: "",
-            description: ""
+            description: "",
+            showCodeListCodes: false,
+            showCodeList: true,
+            codeHeaders: [
+                {key:"code", value:"Code"}, 
+                {key: "codeValue", value: "Code Value"},
+                {key: "codeDescription", value: "Code Description"}],
+            codeListCodeData: []
+
         }
         this.addCall = this.addCall.bind(this);
         this.saveAction = this.saveAction.bind(this);
@@ -27,7 +35,10 @@ class CodeList extends Component {
         this.amsGridRef = React.createRef();
     }
     nameClick(event, codeListId) {
-        alert(codeListId);
+        let res = ApiUtil.getCall(EndPoits.CODE_LIST_FIND+"/"+codeListId);
+        res.then(data => {
+            this.setState({codeListCodeData: data.codeListBean.codeListCodeBeans, showCodeListCodes: true, showAddForm: false, showCodeList: false}); 
+        });
     }
     handleInputChange(event, type) {
         let val = event.target.value;
@@ -38,10 +49,10 @@ class CodeList extends Component {
         }
     }
     cancelAction() {
-        this.setState({showAddForm: false});
+        this.setState({showAddForm: false, showCodeList: true, showCodeListCodes: false});
     }
     addCall(event) {
-        this.setState({showAddForm: true});
+        this.setState({showAddForm: true, showCodeList: false, showCodeListCodes: false});
     }
     deleteAction() {
         if(this.amsGridRef !== undefined && this.amsGridRef.current !== undefined) {
@@ -56,7 +67,7 @@ class CodeList extends Component {
                     if(data.status === "SUCCESS") {
                         Utils.processSuccessMessage('Codelist deleted successfully.');
                         this.getCodeListData();
-                        this.setState({showAddForm: false});
+                        this.setState({showCodeList: true});
                         this.amsGridRef.current.state.selectedItmes = [];
                     }
                 });
@@ -74,7 +85,7 @@ class CodeList extends Component {
         res.then(data => {
             if(data.status === "SUCCESS") {                
                 this.getCodeListData();
-                this.setState({showAddForm: false});
+                this.setState({showCodeList: true, showAddForm: false});
                 Utils.processSuccessMessage("Codelist added succssfully.")
             }
         });
@@ -86,7 +97,6 @@ class CodeList extends Component {
     getCodeListData()  {
         let res = ApiUtil.getCall(EndPoits.CODE_LIST_ALL);
         res.then(data => {
-            console.log(data.codeListBeanList);
             let dataList = [];
             data.codeListBeanList.map((obj) => {
                 dataList.push({recordId: ""+obj.recordId+"", name: ""+obj.name+"", description: ""+obj.description+""});
@@ -96,10 +106,11 @@ class CodeList extends Component {
     }
     render() {
         return(
-            <div>                
+            <div>   
+                {this.state.showAddForm === false && (             
                 <table style={{width: "99%"}}>
                     <tr>
-                        <td>
+                        <td width={"3%"}>
                             <AmsButton 
                                 id="add-button" 
                                 label="Add" 
@@ -116,10 +127,13 @@ class CodeList extends Component {
                             />
                         </td>    
                     </tr>
-                </table>
+                </table>)}
                 {this.state.showAddForm === true && (
                     <div>
-                        <table>
+                        <table width={"99%"}>
+                            <tr>
+                                <td className="grid-title">Add CodeList Form</td>
+                            </tr>
                             <tr>
                                 <td>
                                     <AmsInput
@@ -164,8 +178,9 @@ class CodeList extends Component {
                         </table>
                     </div>
                 )}
-                {this.state.showAddForm === false && (
+                {this.state.showCodeList === true && (
                     <AmsGrid 
+                        id = "codelist-grid"
                         keyValue="recordId"
                         headers={this.state.headers}
                         title="List of CodeList Names"
@@ -173,6 +188,24 @@ class CodeList extends Component {
                         linkFn = {this.nameClick}
                         ref={this.amsGridRef}
                     />
+                )}
+                {this.state.showCodeListCodes === true && (
+                    <div>
+                        <AmsGrid 
+                            id = "codelistcode-grid"
+                            keyValue="recordId"
+                            headers={this.state.codeHeaders}
+                            title="List of CodeList Codes"
+                            data={this.state.codeListCodeData}
+                            ref={this.amsGridRef}
+                        />
+                        <AmsButton 
+                            id="back-button" 
+                            label="Back" 
+                            callBack={event => this.setState({showCodeListCodes: false, showCodeList: true})}
+                            type="inactive"
+                        />
+                    </div>
                 )}
             </div>
         )

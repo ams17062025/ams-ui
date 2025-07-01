@@ -55,7 +55,7 @@ class AmsGrid extends Component {
         const linkDisabled = "linkDisabled";
         const linkEnabled = "linkEnabled";
         return(
-            <div>
+            <div id={this.props.id}>
                 <table className="grid-table">
                     <thead>
                         <th className="grid-title" colSpan={this.props.headers.length+1}>{this.props.title}</th>

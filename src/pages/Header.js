@@ -12,7 +12,9 @@ class Header extends Component {
     render() {
         return(
             <div style={{backgroundColor: "#f9f3f3", marginTop: "10px"}}>                
-                <div style={{float: "left", fontSize: "3em", fontFamily: "fantasy", color: "blueviolet", padding: "0px 10px 0px 10px"}}>AMS</div>
+                <div>
+                    <span className="ams-logo">AMS</span>
+                </div>
                 <div style={{ borderBottom: "2px solid #ccc", paddingBottom: "10px"}}>                    
                     <nav>
                         <table className="menu-cls">
@@ -20,9 +22,9 @@ class Header extends Component {
                                 <td><Link to="/">Home</Link></td>
                                 <td><Link to="/codelist">CodeList</Link></td>
                             </tr>
-                        </table>
+                        </table>                       
                     </nav>
-                </div>
+                </div>                 
                 <Message />
                 <Outlet />
             </div>

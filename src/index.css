@@ -51,6 +51,7 @@ a {
   color: #FFFFFF;
   padding: 10px;
   border: 1px solid #FFFFFF;
+  margin-left: 5px;
 }
 .linkDisabled {
   text-decoration: none;
@@ -67,4 +68,14 @@ a {
     padding-left: 5px;
     padding-right: 5px;
     font-weight: 600;
+}
+.ams-logo {
+    float: left;
+    font-size: 3em;
+    font-family: fantasy;
+    color: blueviolet;
+    padding: 0px 10px;
+}
+.ams-logo-subtitle {
+  float: left;
 }
