@@ -79,3 +79,27 @@ a {
 .ams-logo-subtitle {
   float: left;
 }
+.pagination-td {
+  padding-bottom: 5px;
+  padding-top: 5px;
+  background-color: #ccaee8;
+  padding-left: 5px;
+}
+.pagination-td .left{
+  width: 80%;
+  float: left;
+}
+.pagination-td .right{
+  float: left;
+}
+.jump-page {
+  margin-left: 4px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+.change-page {
+  margin-left: 3px;
+  margin-right: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}

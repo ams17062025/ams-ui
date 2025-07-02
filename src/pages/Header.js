@@ -21,6 +21,7 @@ class Header extends Component {
                             <tr>
                                 <td><Link to="/">Home</Link></td>
                                 <td><Link to="/codelist">CodeList</Link></td>
+                                <td><Link to="/users">Users</Link></td>
                             </tr>
                         </table>                       
                     </nav>

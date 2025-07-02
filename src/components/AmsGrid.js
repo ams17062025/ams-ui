@@ -4,7 +4,8 @@ class AmsGrid extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedItmes: []
+            selectedItmes: [],
+            pageSize: 10
         }
         this.onSelectAll = this.onSelectAll.bind(this);
         this.onSelectItem = this.onSelectItem.bind(this);
@@ -54,6 +55,10 @@ class AmsGrid extends Component {
     render() {
         const linkDisabled = "linkDisabled";
         const linkEnabled = "linkEnabled";
+        let pageSize = this.state.pageSize;
+        if(this.props.pageSize !== undefined) {
+            pageSize = this.props.pageSize;
+        }
         return(
             <div id={this.props.id}>
                 <table className="grid-table">
@@ -97,6 +102,20 @@ class AmsGrid extends Component {
                                     }
                                     </td>
                                 )}
+                            </tr>
+                        )}
+                        {this.props.pagination !== undefined && this.props.pagination === true && (
+                            <tr>
+                                <td className="pagination-td" colSpan={this.props.headers.length+1}>
+                                    <span className="left">Page Size: <input style={{width: "25px"}} type="text" value={pageSize} onChange={event=>this.setState({pageSize: event.target.value})} />
+                                    </span> 
+                                    <span className="right">
+                                        <span className="jump-page">First</span> 
+                                        <span className="change-page">Prev</span> 
+                                        <span className="change-page">Next</span>
+                                        <span className="jump-page">Last</span>
+                                    </span>
+                                </td>
                             </tr>
                         )}
                         
