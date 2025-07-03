@@ -24,7 +24,12 @@ class CodeList extends Component {
                 {key: "codeValue", value: "Code Value"},
                 {key: "codeDescription", value: "Code Description"}],
             codeListCodeData: [],
-            codeListNameError: ""
+             code: "",
+             codeValue: "",
+             codeDescription: "",
+             
+             codeListNameError: "",
+             showCodelistCodeAddForm: false
 
         }
         this.addCall = this.addCall.bind(this);
@@ -34,12 +39,14 @@ class CodeList extends Component {
         this.cancelAction = this.cancelAction.bind(this);
         this.nameClick = this.nameClick.bind(this);
         this.amsGridRef = React.createRef();
+        this.saveCodeListAction = this.saveCodeListAction.bind(this);
     }
     nameClick(event, codeListId) {
         let res = ApiUtil.getCall(EndPoits.CODE_LIST_FIND+"/"+codeListId);
         res.then(data => {
             this.setState({codeListCodeData: data.codeListBean.codeListCodeBeans, showCodeListCodes: true, showAddForm: false, showCodeList: false}); 
         });
+
     }
     handleInputChange(event, type) {
         let val = event.target.value;
@@ -47,13 +54,30 @@ class CodeList extends Component {
             this.setState({ name: val });
         } else if(type === "desc") {
             this.setState({ description: val });
+        }else if(type == "code"){
+            this.setState({ code: val})
+        } else if (type === "codevalue") {
+            this.setState({ codeValue: val });
+       } else if (type === "codedesc") {
+            this.setState({ codeDescription: val });
+       }
+        
+        
+    }
+     cancelAction() {
+        if(this.state.showCodelistCodeAddForm === true) {
+            this.setState({showCodelistCodeAddForm: false,  showCodeList: true, showAddForm: false, showCodeListCodes: false});
+        } else {
+            this.setState({showAddForm: false,  showCodeList: true, showCodeListCodes: false, showCodelistCodeAddForm: false});
         }
     }
-    cancelAction() {
-        this.setState({showAddForm: false, showCodeList: true, showCodeListCodes: false, codeListNameError: ""});
-    }
     addCall(event) {
-        this.setState({showAddForm: true, showCodeList: false, showCodeListCodes: false});
+        if(this.state.showCodeListCodes === true) {
+            this.setState({showCodelistCodeAddForm: true,  showCodeList: false,showAddForm: false, showCodeListCodes: false});
+        } else {
+            this.setState({showAddForm: true,  showCodeList: false, showCodeListCodes: false, showCodelistCodeAddForm: false});
+        }
+        
     }
     deleteAction() {
         if(this.amsGridRef !== undefined && this.amsGridRef.current !== undefined) {
@@ -97,6 +121,26 @@ class CodeList extends Component {
             }
         });
         
+    }
+    saveCodeListAction() {
+        let request = {
+            "codeListBean": {
+                recrodId: sessionStorage.getItem("codelistId"),
+                "codeListCodeBeans": [{
+                    code: this.state.code,
+                    codeValue: this.state.codeValue,
+                    codeDescription: this.state.codeDescription
+                }]
+            }
+        }
+        let res = ApiUtil.postCall(EndPoits.CODE_LIST_ADD, request);
+        res.then(data => {
+            if(data.status === "SUCCESS") {                
+                this.getCodeListData();
+                this.setState({showCodeList: true, showAddForm: false, codeListNameError: ""});
+                Utils.processSuccessMessage("Codelist added succssfully.")
+            }
+        });
     }
     componentDidMount() {
         this.getCodeListData();
@@ -215,6 +259,72 @@ class CodeList extends Component {
                             callBack={event => this.setState({showCodeListCodes: false, showCodeList: true})}
                             type="inactive"
                         />
+                    </div>
+                )}
+                {this.state.showCodelistCodeAddForm === true && (
+                    <div>
+                        <table width={"99%"}>
+                            <tr>
+                                <td className="grid-title">Add CodeList Codes Form</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <AmsInput
+                                        id="code-id"
+                                        name="code-id"
+                                        label="Code"
+                                        value={this.state.nameInput}
+                                        error={this.state.codeListNameError}
+                                        onChange={event=>this.handleInputChange(event, "code")}
+                                        required={true}
+                                        width="10%"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <AmsInput
+                                        id="code-value-id"
+                                        name="code-value-id"
+                                        label="Code Value"
+                                        description=""
+                                        value={this.state.descriptionIput}
+                                        onChange={event=>this.handleInputChange(event, "codevalue")}
+                                        width="10%"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <AmsInput
+                                        id="code-desc-id"
+                                        name="code-desc-id"
+                                        label="Description"
+                                        description=""
+                                        value={this.state.descriptionIput}
+                                        onChange={event=>this.handleInputChange(event, "codedesc")}
+                                        width="10%"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{paddingLeft: "10%"}}>
+                                    <AmsButton 
+                                        id="add-button" 
+                                        label="Save" 
+                                        callBack={event => this.saveCodeListAction(event)}
+                                        type="active"
+                                        style={{float: "left", marginRight: "3px"}}
+                                    />
+                                    <AmsButton 
+                                        id="cancel-button" 
+                                        label="Cancel" 
+                                        callBack={event => this.cancelAction(event)}
+                                        type="inactive"
+                                    />
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 )}
             </div>
