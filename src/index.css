@@ -103,3 +103,19 @@ a {
   cursor: pointer;
   font-size: 14px;
 }
+.ams-input-cmp .input-label {
+  float: left;
+  margin-right: 6px;
+}
+.ams-input-cmp input {
+  padding: 5px;
+}
+.ams-required {
+  color: red;
+  font-size: 20px;
+}
+.ams-required-error {
+  color: red;
+  font-size: 20px;
+  margin-left: 5px;
+}

@@ -23,7 +23,8 @@ class CodeList extends Component {
                 {key:"code", value:"Code"}, 
                 {key: "codeValue", value: "Code Value"},
                 {key: "codeDescription", value: "Code Description"}],
-            codeListCodeData: []
+            codeListCodeData: [],
+            codeListNameError: ""
 
         }
         this.addCall = this.addCall.bind(this);
@@ -49,7 +50,7 @@ class CodeList extends Component {
         }
     }
     cancelAction() {
-        this.setState({showAddForm: false, showCodeList: true, showCodeListCodes: false});
+        this.setState({showAddForm: false, showCodeList: true, showCodeListCodes: false, codeListNameError: ""});
     }
     addCall(event) {
         this.setState({showAddForm: true, showCodeList: false, showCodeListCodes: false});
@@ -61,20 +62,26 @@ class CodeList extends Component {
             } else if(this.amsGridRef.current.state.selectedItmes.length > 1) {
                 Utils.processErronMessage('Please select a single item to delete.');
             } else {
-                var codeListId = this.amsGridRef.current.state.selectedItmes[0];
-                let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
-                res.then(data => {
-                    if(data.status === "SUCCESS") {
-                        Utils.processSuccessMessage('Codelist deleted successfully.');
-                        this.getCodeListData();
-                        this.setState({showCodeList: true});
-                        this.amsGridRef.current.state.selectedItmes = [];
-                    }
-                });
+                if(window.confirm('Do you want to delete the codelist ?')) {
+                    var codeListId = this.amsGridRef.current.state.selectedItmes[0];
+                    let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
+                    res.then(data => {
+                        if(data.status === "SUCCESS") {
+                            Utils.processSuccessMessage('Codelist deleted successfully.');
+                            this.getCodeListData();
+                            this.setState({showCodeList: true});
+                            this.amsGridRef.current.state.selectedItmes = [];
+                        }
+                    });
+                }
             }
         }
     }
     saveAction(event) {
+        if(this.state.name === undefined || this.state.name === '') {
+            this.setState({codeListNameError: "Name should not be empty."});
+            return;
+        }
         let request = {
             "codeListBean": {
                 name: this.state.name,
@@ -85,7 +92,7 @@ class CodeList extends Component {
         res.then(data => {
             if(data.status === "SUCCESS") {                
                 this.getCodeListData();
-                this.setState({showCodeList: true, showAddForm: false});
+                this.setState({showCodeList: true, showAddForm: false, codeListNameError: ""});
                 Utils.processSuccessMessage("Codelist added succssfully.")
             }
         });
@@ -139,10 +146,12 @@ class CodeList extends Component {
                                     <AmsInput
                                         id="Name"
                                         name="nameInput"
-                                        description="Description"
                                         label="Name"
                                         value={this.state.nameInput}
+                                        error={this.state.codeListNameError}
                                         onChange={event=>this.handleInputChange(event, "name")}
+                                        required={true}
+                                        width="10%"
                                     />
                                 </td>
                             </tr>
@@ -151,15 +160,16 @@ class CodeList extends Component {
                                     <AmsInput
                                         id="decription"
                                         name="descriptionInput"
-                                        description="Description"
                                         label="Description"
+                                        description=""
                                         value={this.state.descriptionIput}
                                         onChange={event=>this.handleInputChange(event, "desc")}
+                                        width="10%"
                                     />
                                 </td>
                             </tr>
                             <tr>
-                                <td colSpan={2}>
+                                <td style={{paddingLeft: "10%"}}>
                                     <AmsButton 
                                         id="add-button" 
                                         label="Save" 
