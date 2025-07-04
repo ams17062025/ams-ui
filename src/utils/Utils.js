@@ -1,5 +1,5 @@
 
-var messageTimeOut = 1300;
+var messageTimeOut = 2000;
 
 export function processSuccessMessage(message) {
     var el = document.getElementById("myPopup");

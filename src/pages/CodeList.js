@@ -26,8 +26,7 @@ class CodeList extends Component {
             codeListCodeData: [],
              code: "",
              codeValue: "",
-             codeDescription: "",
-             
+             codeDescription: "",             
              codeListNameError: "",
              showCodelistCodeAddForm: false
 
@@ -44,6 +43,7 @@ class CodeList extends Component {
     nameClick(event, codeListId) {
         let res = ApiUtil.getCall(EndPoits.CODE_LIST_FIND+"/"+codeListId);
         res.then(data => {
+            sessionStorage.setItem("codelistId", codeListId);
             this.setState({codeListCodeData: data.codeListBean.codeListCodeBeans, showCodeListCodes: true, showAddForm: false, showCodeList: false}); 
         });
 
@@ -118,14 +118,17 @@ class CodeList extends Component {
                 this.getCodeListData();
                 this.setState({showCodeList: true, showAddForm: false, codeListNameError: ""});
                 Utils.processSuccessMessage("Codelist added succssfully.")
+            } else {   
+                Utils.processErronMessage(data.error.errorMessage)
             }
         });
         
     }
     saveCodeListAction() {
+        let codelistId = parseInt(sessionStorage.getItem("codelistId"))
         let request = {
             "codeListBean": {
-                recrodId: sessionStorage.getItem("codelistId"),
+                "recordId": codelistId,
                 "codeListCodeBeans": [{
                     code: this.state.code,
                     codeValue: this.state.codeValue,
@@ -133,12 +136,16 @@ class CodeList extends Component {
                 }]
             }
         }
-        let res = ApiUtil.postCall(EndPoits.CODE_LIST_ADD, request);
+        let res = ApiUtil.postCall(EndPoits.CODE_LIST_CODE_ADD, request);
         res.then(data => {
             if(data.status === "SUCCESS") {                
                 this.getCodeListData();
-                this.setState({showCodeList: true, showAddForm: false, codeListNameError: ""});
-                Utils.processSuccessMessage("Codelist added succssfully.")
+                this.setState({showCodelistCodeAddForm: false});
+                Utils.processSuccessMessage("Codelist code added succssfully.");
+                sessionStorage.removeItem("codelistId");
+                this.nameClick(null, codelistId);
+            } else if(data.error !== undefined && data.error.errorMessage !== undefined) {
+                 Utils.processErronMessage(data.error.errorMessage);
             }
         });
     }
