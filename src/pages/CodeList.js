@@ -28,7 +28,8 @@ class CodeList extends Component {
              codeValue: "",
              codeDescription: "",             
              codeListNameError: "",
-             showCodelistCodeAddForm: false
+             showCodelistCodeAddForm: false,
+             codeListCodeError: ""
 
         }
         this.addCall = this.addCall.bind(this);
@@ -66,9 +67,9 @@ class CodeList extends Component {
     }
      cancelAction() {
         if(this.state.showCodelistCodeAddForm === true) {
-            this.setState({showCodelistCodeAddForm: false,  showCodeList: true, showAddForm: false, showCodeListCodes: false});
+            this.setState({codeListCodeError: "", code: "",showCodelistCodeAddForm: false,  showCodeList: true, showAddForm: false, showCodeListCodes: false});
         } else {
-            this.setState({showAddForm: false,  showCodeList: true, showCodeListCodes: false, showCodelistCodeAddForm: false});
+            this.setState({name: "",codeListNameError: "",showAddForm: false,  showCodeList: true, showCodeListCodes: false, showCodelistCodeAddForm: false});
         }
     }
     addCall(event) {
@@ -101,6 +102,28 @@ class CodeList extends Component {
             }
         }
     }
+    deleteCodeListCode() {
+        if(this.amsGridRef !== undefined && this.amsGridRef.current !== undefined) {
+            if(this.amsGridRef.current.state.selectedItmes.length === 0) {
+                Utils.processErronMessage('Please select a item to delete.');
+            } else if(this.amsGridRef.current.state.selectedItmes.length > 1) {
+                Utils.processErronMessage('Please select a single item to delete.');
+            } else {
+                if(window.confirm('Do you want to delete the codelistcode ?')) {
+                    var codeListId = this.amsGridRef.current.state.selectedItmes[0];
+                    let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
+                    res.then(data => {
+                        if(data.status === "SUCCESS") {
+                            Utils.processSuccessMessage('Codelistcode deleted successfully.');
+                            this.getCodeListData();
+                            this.setState({showCodeList: true});
+                            this.amsGridRef.current.state.selectedItmes = [];
+                        }
+                    });
+                }
+            }
+        }
+    }
     saveAction(event) {
         if(this.state.name === undefined || this.state.name === '') {
             this.setState({codeListNameError: "Name should not be empty."});
@@ -116,7 +139,7 @@ class CodeList extends Component {
         res.then(data => {
             if(data.status === "SUCCESS") {                
                 this.getCodeListData();
-                this.setState({showCodeList: true, showAddForm: false, codeListNameError: ""});
+                this.setState({showCodeList: true, showAddForm: false, codeListNameError: "", name: ""});
                 Utils.processSuccessMessage("Codelist added succssfully.")
             } else {   
                 Utils.processErronMessage(data.error.errorMessage)
@@ -124,7 +147,11 @@ class CodeList extends Component {
         });
         
     }
-    saveCodeListAction() {
+    saveCodeListAction(){
+        if(this.state.code === undefined || this.state.code === '') {
+            this.setState({codeListCodeError: "Code should not be empty."});
+            return;
+        }
         let codelistId = parseInt(sessionStorage.getItem("codelistId"))
         let request = {
             "codeListBean": {
@@ -278,10 +305,10 @@ class CodeList extends Component {
                                 <td>
                                     <AmsInput
                                         id="code-id"
-                                        name="code-id"
-                                        label="Code"
-                                        value={this.state.nameInput}
-                                        error={this.state.codeListNameError}
+                                        name="code"
+                                        label="code"
+                                        value={this.state.code}
+                                        error={this.state.codeListCodeError}
                                         onChange={event=>this.handleInputChange(event, "code")}
                                         required={true}
                                         width="10%"
