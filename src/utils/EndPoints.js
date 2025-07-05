@@ -1,4 +1,4 @@
-export const URL="http://localhost:9011"
+export const URL="http://192.168.1.14:8083"
 
 export const CODE_LIST_ALL = URL + "/codelist/list";
 export const CODE_LIST_ADD = URL + "/codelist/add";
