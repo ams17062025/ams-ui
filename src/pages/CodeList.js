@@ -89,41 +89,33 @@ class CodeList extends Component {
             } else {
                 if(window.confirm('Do you want to delete the codelist ?')) {
                     var codeListId = this.amsGridRef.current.state.selectedItmes[0];
-                    let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
-                    res.then(data => {
-                        if(data.status === "SUCCESS") {
-                            Utils.processSuccessMessage('Codelist deleted successfully.');
-                            this.getCodeListData();
-                            this.setState({showCodeList: true});
-                            this.amsGridRef.current.state.selectedItmes = [];
-                        }
-                    });
+                    if(this.state.showCodeListCodes === true) {
+                        let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_CODE_DELETE+"/"+codeListId, {});
+                        res.then(data => {
+                            if(data.status === "SUCCESS") {
+                                Utils.processSuccessMessage('Codelistcode deleted successfully.');
+                                this.getCodeListData();
+                                this.setState({showCodeList: true});
+                                this.amsGridRef.current.state.selectedItmes = [];
+                            }
+                        });
+                    } else {
+                        let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
+                        res.then(data => {
+                            if(data.status === "SUCCESS") {
+                                Utils.processSuccessMessage('Codelist deleted successfully.');
+                                this.getCodeListData();
+                                this.setState({showCodeList: true});
+                                this.amsGridRef.current.state.selectedItmes = [];
+                            }
+                        });
+                    }
+                    
                 }
             }
         }
     }
-    deleteCodeListCode() {
-        if(this.amsGridRef !== undefined && this.amsGridRef.current !== undefined) {
-            if(this.amsGridRef.current.state.selectedItmes.length === 0) {
-                Utils.processErronMessage('Please select a item to delete.');
-            } else if(this.amsGridRef.current.state.selectedItmes.length > 1) {
-                Utils.processErronMessage('Please select a single item to delete.');
-            } else {
-                if(window.confirm('Do you want to delete the codelistcode ?')) {
-                    var codeListId = this.amsGridRef.current.state.selectedItmes[0];
-                    let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
-                    res.then(data => {
-                        if(data.status === "SUCCESS") {
-                            Utils.processSuccessMessage('Codelistcode deleted successfully.');
-                            this.getCodeListData();
-                            this.setState({showCodeList: true});
-                            this.amsGridRef.current.state.selectedItmes = [];
-                        }
-                    });
-                }
-            }
-        }
-    }
+
     saveAction(event) {
         if(this.state.name === undefined || this.state.name === '') {
             this.setState({codeListNameError: "Name should not be empty."});
