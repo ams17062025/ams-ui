@@ -88,9 +88,17 @@ class CodeList extends Component {
                 Utils.processErronMessage('Please select a single item to delete.');
             } else {
                 if(window.confirm('Do you want to delete the codelist ?')) {
-                    var codeListId = this.amsGridRef.current.state.selectedItmes[0];
                     if(this.state.showCodeListCodes === true) {
-                        let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_CODE_DELETE+"/"+codeListId, {});
+                        let codelistRecId = parseInt(sessionStorage.getItem("codelistId"))
+                        let request = {
+                            "codeListBean": {
+                                "recordId": codelistRecId,
+                                "codeListCodeBeans": [{
+                                    recordId: this.amsGridRef.current.state.selectedItmes[0]
+                                }]
+                            }
+                        }
+                        let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_CODE_DELETE, request);
                         res.then(data => {
                             if(data.status === "SUCCESS") {
                                 Utils.processSuccessMessage('Codelistcode deleted successfully.');
@@ -100,6 +108,7 @@ class CodeList extends Component {
                             }
                         });
                     } else {
+                        var codeListId = this.amsGridRef.current.state.selectedItmes[0];
                         let res = ApiUtil.deleteCall(EndPoits.CODE_LIST_DELETE+"/"+codeListId, {});
                         res.then(data => {
                             if(data.status === "SUCCESS") {
